@@ -29,7 +29,9 @@ import InputBarAccessoryView
 /// A subclass of `UIViewController` with a `MessagesCollectionView` object
 /// that is used to display conversation interfaces.
 open class MessagesViewController: UIViewController,
-UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecognizerDelegate {
+                                   UICollectionViewDelegateFlowLayout,
+                                   UICollectionViewDataSource,
+                                   UIGestureRecognizerDelegate {
 
     /// The `MessagesCollectionView` managed by the messages view controller object.
     open var messagesCollectionView = MessagesCollectionView()
@@ -169,6 +171,7 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecogni
         removeMenuControllerObservers()
         removeObservers()
         clearMemoryCache()
+        print("\(Self.description()) has been deinited")
     }
 
     // MARK: - Methods [Private]
@@ -212,7 +215,7 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecogni
             parentView.frame.origin.x = offsetValue
         case .ended:
             messagesCollectionView.showsVerticalScrollIndicator = true
-            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.8, options: .curveEaseOut, animations: {
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.8, options: [.curveEaseOut], animations: {
                 parentView.frame.origin.x = 0
             }, completion: nil)
         default:
@@ -231,11 +234,6 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecogni
         }
     }
 
-    private func setupDelegates() {
-        messagesCollectionView.delegate = self
-        messagesCollectionView.dataSource = self
-    }
-
     private func setupSubviews() {
         view.addSubview(messagesCollectionView)
     }
@@ -249,6 +247,12 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecogni
         let trailing = messagesCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         NSLayoutConstraint.activate([top, bottom, trailing, leading])
     }
+    
+    private func setupDelegates() {
+        messagesCollectionView.delegate = self
+        messagesCollectionView.dataSource = self
+    }
+
 
     // MARK: - Typing Indicator API
 
@@ -261,7 +265,10 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecogni
     ///              when `animated` is `TRUE` or before the `completion` block executes
     ///              when `animated` is `FALSE`
     ///   - completion: A completion block to execute after the insertion/deletion
-    open func setTypingIndicatorViewHidden(_ isHidden: Bool, animated: Bool, whilePerforming updates: (() -> Void)? = nil, completion: ((Bool) -> Void)? = nil) {
+    open func setTypingIndicatorViewHidden(_ isHidden: Bool,
+                                           animated: Bool,
+                                           whilePerforming updates: (() -> Void)? = nil,
+                                           completion: ((Bool) -> Void)? = nil) {
 
         guard isTypingIndicatorHidden != isHidden else {
             completion?(false)
@@ -517,7 +524,7 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecogni
 
     // MARK: - UIGestureRecognizerDelegate
 
-    /// check pan gesture direction
+    /// check pan gesture (swipe right) direction
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         guard let panGesture = gestureRecognizer as? UIPanGestureRecognizer else {
             return false
