@@ -45,18 +45,13 @@ internal extension MessagesViewController {
 
     @objc
     private func handleTextViewDidBeginEditing(_ notification: Notification) {
-        if scrollsToLastItemOnKeyboardBeginsEditing || scrollsToLastItemOnKeyboardBeginsEditing {
+        if scrollsToLastItemOnKeyboardBeginsEditing {
             guard
-                let inputTextView = notification.object as? InputTextView,
-                inputTextView === messageInputBar.inputTextView
+                let _ = notification.object as? InputTextView
             else {
                 return
             }
-            if scrollsToLastItemOnKeyboardBeginsEditing {
-                messagesCollectionView.scrollToLastItem()
-            } else {
-                messagesCollectionView.scrollToLastItem(animated: true)
-            }
+            messagesCollectionView.scrollToLastItem(animated: false)
         }
     }
 
