@@ -526,3 +526,10 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecogni
         return abs(velocity.x) > abs(velocity.y)
     }
 }
+    // MARK:  - ScrollView
+extension MessagesViewController:UIScrollViewDelegate{
+    
+    open func scrollViewDidScroll(_ scrollView: UIScrollView) {}
+    
+    open func scrollViewDidZoom(_ scrollView: UIScrollView) {}
+}
