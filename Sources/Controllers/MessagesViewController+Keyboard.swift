@@ -47,8 +47,7 @@ internal extension MessagesViewController {
     private func handleTextViewDidBeginEditing(_ notification: Notification) {
         if scrollsToLastItemOnKeyboardBeginsEditing || scrollsToLastItemOnKeyboardBeginsEditing {
             guard
-                let inputTextView = notification.object as? InputTextView,
-                inputTextView === messageInputBar.inputTextView
+                (notification.object as? InputTextView) != nil
             else {
                 return
             }
@@ -97,9 +96,22 @@ internal extension MessagesViewController {
 
         let newBottomInset = requiredScrollViewBottomInset(forKeyboardFrame: keyboardEndFrame)
 
+        let differenceOfBottomInset = newBottomInset - messageCollectionViewBottomInset
+
         UIView.performWithoutAnimation {
             messageCollectionViewBottomInset = newBottomInset
         }
+        
+        if maintainPositionOnKeyboardFrameChanged && differenceOfBottomInset != 0 {
+            let contentOffset = CGPoint(x: messagesCollectionView.contentOffset.x, y: messagesCollectionView.contentOffset.y + differenceOfBottomInset)
+            // Changing contentOffset to bigger number than the contentSize will result in a jump of content
+            // https://github.com/MessageKit/MessageKit/issues/1486
+            guard contentOffset.y <= messagesCollectionView.contentSize.height else {
+                return
+            }
+            messagesCollectionView.setContentOffset(contentOffset, animated: true)
+        }
+
     }
 
     // MARK: - Inset Computation
